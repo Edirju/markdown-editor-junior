@@ -1,0 +1,95 @@
+@import "tailwindcss";
+@import "remixicon/fonts/remixicon.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/inconsolata/400.css";
+@import "@fontsource/inconsolata/500.css";
+@import "@fontsource/inconsolata/600.css";
+@import "@fontsource/inconsolata/700.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+
+  /* CM theme colors — light */
+  --cm-caret: #1a1a2e;
+  --cm-selection-bg: rgba(0, 0, 0, 0.08);
+  --cm-active-line-bg: rgba(0, 0, 0, 0.03);
+  --cm-link: #2563eb;
+  --cm-wiki-link: #7c3aed;
+  --cm-code-bg: #f1f5f9;
+}
+
+.dark {
+  --cm-caret: #e2e8f0;
+  --cm-selection-bg: rgba(255, 255, 255, 0.12);
+  --cm-active-line-bg: rgba(255, 255, 255, 0.04);
+  --cm-link: #60a5fa;
+  --cm-wiki-link: #a78bfa;
+  --cm-code-bg: #1e293b;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* CodeMirror overrides */
+.ͼ1 .cm-scroller {
+  font-family: inherit !important;
+}
+
+/* Hides the fold placeholder */
+.ͼ1 .cm-foldPlaceholder {
+  display: none !important;
+}
+
+/* Task list checkbox styling */
+.cm-md-task-unchecked,
+.cm-md-task-checked {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.cm-md-task-unchecked::before,
+.cm-md-task-checked::before {
+  content: '';
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 3px;
+  border: 1.5px solid currentColor;
+  flex-shrink: 0;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-right: 0.25rem;
+}
+
+.cm-md-task-checked::before {
+  background-color: var(--cm-link);
+  border-color: var(--cm-link);
+}
+
+.cm-md-task-checked::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  transform: translateY(-60%) rotate(45deg);
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  pointer-events: none;
+}
+
+/* Inconsolata for toolbar */
+.toolbar-font {
+  font-family: Inconsolata, monospace;
+}

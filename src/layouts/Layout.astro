@@ -1,0 +1,30 @@
+---
+import { MenuBar } from '../components/layout/MenuBar'
+import { Toolbar } from '../components/editor/Toolbar'
+import { StatusBar } from '../components/layout/StatusBar'
+import { EditorIsland } from '../components/editor/EditorIsland'
+import { SettingsModal } from '../components/modals/SettingsModal'
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Markdown Editor</title>
+  </head>
+  <body>
+    <div class="app-layout">
+      <MenuBar client:load />
+      <Toolbar client:load />
+      <div class="app-main">
+        <EditorIsland client:load />
+      </div>
+      <StatusBar client:load />
+      <SettingsModal client:load />
+    </div>
+  </body>
+</html>
