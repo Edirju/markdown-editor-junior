@@ -87,12 +87,25 @@ export const cmTheme = EditorView.theme(
       textDecoration: 'line-through',
     },
     '.cm-md-inline-code': {
-      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
-      fontSize: '0.875em',
+      fontFamily: '"Cascadia Code", "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace',
+      fontSize: '0.8125em',
       backgroundColor: 'var(--cm-code-bg)',
-      padding: '0.2em 0.4em',
+      padding: '0.15em 0.45em',
+      borderRadius: '4px',
+      border: '1px solid var(--cm-code-border)',
+      color: 'var(--cm-code-text)',
+      letterSpacing: '-0.01em',
+    },
+    '.cm-md-formula': {
+      fontFamily: '"Latin Modern Math", "STIX Two Math", "Cambria Math", serif',
+      fontSize: '1.05em',
+      fontStyle: 'italic',
+      color: 'var(--cm-formula-text)',
+      backgroundColor: 'var(--cm-formula-bg)',
+      padding: '0.1em 0.3em',
       borderRadius: '3px',
     },
+
   },
   { dark: false },
 )

@@ -6,10 +6,50 @@ import { keymap } from '@codemirror/view'
 import { defaultKeymap } from '@codemirror/commands'
 import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language'
 import { $doc } from '../../stores/document'
-import { $cursorLine, $editorMode, $persistenceStatus } from '../../stores/ui'
+import { $cursorLine, $cursorCol, $editorMode } from '../../stores/ui'
 import { schedulePersist, loadDoc } from '../../lib/persistence'
 import { cmTheme } from '../../lib/theme'
 import { livePreview, defaultExtensions } from '../../extensions/live-preview'
+import { setEditorView } from '../../lib/editor-ref'
+import {
+  toggleBold,
+  toggleItalic,
+  toggleStrikethrough,
+  toggleHighlight,
+  toggleInlineCode,
+  toggleFormula,
+  clearFormatting,
+  insertHeading,
+  insertBulletList,
+  insertNumberedList,
+  insertTaskList,
+  insertBlockquote,
+  insertHorizontalRule,
+  insertCodeBlock,
+  insertTable,
+} from '../../lib/format-commands'
+
+const customKeymap = keymap.of([
+  { key: 'Mod-b', run: () => { toggleBold(); return true } },
+  { key: 'Mod-i', run: () => { toggleItalic(); return true } },
+  { key: 'Mod-Shift-s', run: () => { toggleStrikethrough(); return true } },
+  { key: 'Mod-Shift-h', run: () => { toggleHighlight(); return true } },
+  { key: 'Mod-e', run: () => { toggleInlineCode(); return true } },
+  { key: 'Mod-Shift-m', run: () => { toggleFormula(); return true } },
+  { key: 'Mod-\\', run: () => { clearFormatting(); return true } },
+  { key: 'Mod-1', run: () => { insertHeading(1); return true } },
+  { key: 'Mod-2', run: () => { insertHeading(2); return true } },
+  { key: 'Mod-3', run: () => { insertHeading(3); return true } },
+  { key: 'Mod-4', run: () => { insertHeading(4); return true } },
+  { key: 'Mod-5', run: () => { insertHeading(5); return true } },
+  { key: 'Mod-6', run: () => { insertHeading(6); return true } },
+  { key: 'Mod-Shift-u', run: () => { insertBulletList(); return true } },
+  { key: 'Mod-Shift-o', run: () => { insertNumberedList(); return true } },
+  { key: 'Mod-Shift-t', run: () => { insertTaskList(); return true } },
+  { key: 'Mod-Shift-q', run: () => { insertBlockquote(); return true } },
+  { key: 'Mod-Shift--', run: () => { insertHorizontalRule(); return true } },
+  { key: 'Mod-Shift-c', run: () => { insertCodeBlock(); return true } },
+])
 
 export function Editor() {
   const editorRef = useRef<HTMLDivElement>(null)
@@ -26,8 +66,10 @@ export function Editor() {
         schedulePersist(content)
       }
       if (update.selectionSet) {
-        const line = update.state.doc.lineAt(update.state.selection.main.head)
+        const head = update.state.selection.main.head
+        const line = update.state.doc.lineAt(head)
         $cursorLine.set(line.number)
+        $cursorCol.set(head - line.from + 1)
       }
     })
 
@@ -41,6 +83,7 @@ export function Editor() {
         basicSetup,
         markdown({ base: markdownLanguage }),
         keymap.of(defaultKeymap),
+        customKeymap,
         cmTheme,
         livePreview(defaultExtensions),
         updateListener,
@@ -56,6 +99,7 @@ export function Editor() {
     })
 
     viewRef.current = view
+    setEditorView(view)
 
     // Load saved doc from persistence
     loadDoc().then((saved) => {
@@ -67,7 +111,10 @@ export function Editor() {
       }
     })
 
-    return () => view.destroy()
+    return () => {
+      setEditorView(null!)
+      view.destroy()
+    }
   }, [])
 
   // React to edit/read mode changes

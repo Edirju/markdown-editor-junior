@@ -8,6 +8,7 @@ import { taskListsExtension } from './task-lists'
 import { wikiLinksExtension, getWikiLinkDecorations } from './wiki-links'
 import { inlineCodeExtension } from './inline-code'
 import { strikethroughExtension } from './strikethrough'
+import { formulaExtension, getFormulaDecorations } from './formula'
 
 export const defaultExtensions: MarkdownExtensionConfig[] = [
   headersExtension,
@@ -17,24 +18,26 @@ export const defaultExtensions: MarkdownExtensionConfig[] = [
   strikethroughExtension,
 ]
 
+function cursorInsideNode(state: { selection: { main: { head: number } } }, from: number, to: number): boolean {
+  const cursorPos = state.selection.main.head
+  return cursorPos >= from && cursorPos <= to
+}
+
 function getDecorations(view: EditorView, extensions: MarkdownExtensionConfig[]): DecorationSet {
   const decos: Range<Decoration>[] = []
   const state = view.state
-  const cursorLine = state.doc.lineAt(state.selection.main.head).number
   const docStr = state.doc.toString()
 
   // 1. Syntax-tree-based extensions
   syntaxTree(state).iterate({
     enter: (nodeRef) => {
       const { node } = nodeRef
-      const fromLine = state.doc.lineAt(node.from).number
-      const toLine = state.doc.lineAt(Math.max(node.to - 1, node.from)).number
-
-      // Skip cursor line entirely — show raw syntax there
-      if (fromLine === cursorLine || toLine === cursorLine) return false
 
       for (const ext of extensions) {
         if (ext.nodeTypes.includes(node.type.name)) {
+          // Show raw syntax only for this specific formatting node
+          if (cursorInsideNode(state, node.from, node.to)) return false
+
           const specs = ext.getDecorations(
             {
               from: node.from,
@@ -44,7 +47,7 @@ function getDecorations(view: EditorView, extensions: MarkdownExtensionConfig[])
               parent: node.parent,
             },
             state.doc,
-            cursorLine,
+            state.doc.lineAt(state.selection.main.head).number,
           )
 
           if (specs) {
@@ -62,9 +65,15 @@ function getDecorations(view: EditorView, extensions: MarkdownExtensionConfig[])
   // 2. Wiki-links — handled via regex since not in standard syntax tree
   const wikiDecos = getWikiLinkDecorations(docStr)
   for (const spec of wikiDecos) {
-    const fromLine = state.doc.lineAt(spec.from).number
-    const toLine = state.doc.lineAt(spec.to).number
-    if (fromLine !== cursorLine && toLine !== cursorLine) {
+    if (!cursorInsideNode(state, spec.from, spec.to)) {
+      decos.push(Decoration.mark({ class: spec.class }).range(spec.from, spec.to))
+    }
+  }
+
+  // 3. Formulas ($...$) — handled via regex
+  const formulaDecos = getFormulaDecorations(docStr)
+  for (const spec of formulaDecos) {
+    if (!cursorInsideNode(state, spec.from, spec.to)) {
       decos.push(Decoration.mark({ class: spec.class }).range(spec.from, spec.to))
     }
   }
