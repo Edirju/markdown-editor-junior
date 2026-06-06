@@ -15,32 +15,32 @@ const HEADING_TYPES = [
   'Heading6',
 ]
 
-const HEADER_MARK_NAMES = new Set(['HeaderMark'])
-
 export const headersExtension: MarkdownExtensionConfig = {
   name: 'headers',
   nodeTypes: HEADING_TYPES,
-  getDecorations: (node, _doc, _cursorLine) => {
-    const decos: DecorationSpec[] = []
+  getDecorations: (node, doc, _cursorLine) => {
     const name = node.type.name
     const match = name.match(/(\d+)/)
     if (!match) return null
     const level = match[1]
+    const text = doc.toString()
+    const slice = text.slice(node.from, node.to)
 
-    let child = node.firstChild
-    while (child) {
-      if (HEADER_MARK_NAMES.has(child.type.name)) {
-        // Hide the # markers
-        const len = child.to - child.from
-        decos.push({ from: child.from, to: child.to, class: 'cm-md-hide' })
-        // Also hide trailing whitespace after the markers
-        decos.push({ from: child.to, to: child.to + 1, class: 'cm-md-hide' })
-      } else {
-        decos.push({ from: child.from, to: child.to, class: `cm-md-header-${level}` })
-      }
-      child = child.nextSibling
-    }
+    // Find where the # markers end
+    let markerEnd = 0
+    while (markerEnd < slice.length && slice[markerEnd] === '#') markerEnd++
 
-    return decos.length > 0 ? decos : null
+    // Skip the space after markers if present
+    const contentStart = markerEnd + (slice[markerEnd] === ' ' ? 1 : 0)
+
+    const decos: DecorationSpec[] = []
+
+    // Hide markers and the trailing space
+    decos.push({ from: node.from, to: node.from + contentStart, class: 'cm-md-hide' })
+
+    // Apply heading style to the content
+    decos.push({ from: node.from + contentStart, to: node.to, class: `cm-md-header-${level}` })
+
+    return decos
   },
 }

@@ -110,33 +110,33 @@ export function MenuBar() {
   }, [activeMenu])
 
   return (
-    <div ref={barRef} class="menu-bar">
+    <div ref={barRef} className="menu-bar">
       {menus.map((menu) => (
-        <div key={menu.id} class="menu-item-wrapper">
+        <div key={menu.id} className="menu-item-wrapper">
           <button
-            class={`menu-trigger ${activeMenu === menu.id ? 'menu-trigger--active' : ''}`}
+            className={`menu-trigger ${activeMenu === menu.id ? 'menu-trigger--active' : ''}`}
             onClick={() => toggleMenu(menu.id)}
           >
             {menu.label}
           </button>
           {activeMenu === menu.id && (
-            <div class="menu-dropdown">
+            <div className="menu-dropdown">
               {menu.items.map((item, i) => {
                 if (item.divider) {
-                  return <div key={`div-${i}`} class="menu-divider" />
+                  return <div key={`div-${i}`} className="menu-divider" />
                 }
                 return (
                   <button
                     key={item.label}
-                    class="menu-dropdown-item"
+                    className="menu-dropdown-item"
                     onClick={() => {
                       if (item.action) item.action()
                       closeMenu()
                     }}
                   >
-                    <span class="menu-dropdown-label">{item.label}</span>
+                    <span className="menu-dropdown-label">{item.label}</span>
                     {item.shortcut && (
-                      <span class="menu-dropdown-shortcut">{item.shortcut}</span>
+                      <span className="menu-dropdown-shortcut">{item.shortcut}</span>
                     )}
                   </button>
                 )

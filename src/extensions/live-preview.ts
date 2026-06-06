@@ -9,6 +9,8 @@ import { wikiLinksExtension, getWikiLinkDecorations } from './wiki-links'
 import { inlineCodeExtension } from './inline-code'
 import { strikethroughExtension } from './strikethrough'
 import { formulaExtension, getFormulaDecorations } from './formula'
+import { highlightExtension, getHighlightDecorations } from './highlight'
+import { blockquoteExtension } from './blockquote'
 
 export const defaultExtensions: MarkdownExtensionConfig[] = [
   headersExtension,
@@ -16,6 +18,8 @@ export const defaultExtensions: MarkdownExtensionConfig[] = [
   taskListsExtension,
   inlineCodeExtension,
   strikethroughExtension,
+  highlightExtension,
+  blockquoteExtension,
 ]
 
 function cursorInsideNode(state: { selection: { main: { head: number } } }, from: number, to: number): boolean {
@@ -73,6 +77,14 @@ function getDecorations(view: EditorView, extensions: MarkdownExtensionConfig[])
   // 3. Formulas ($...$) — handled via regex
   const formulaDecos = getFormulaDecorations(docStr)
   for (const spec of formulaDecos) {
+    if (!cursorInsideNode(state, spec.from, spec.to)) {
+      decos.push(Decoration.mark({ class: spec.class }).range(spec.from, spec.to))
+    }
+  }
+
+  // 4. Highlight (==...==) — handled via regex
+  const highlightDecos = getHighlightDecorations(docStr)
+  for (const spec of highlightDecos) {
     if (!cursorInsideNode(state, spec.from, spec.to)) {
       decos.push(Decoration.mark({ class: spec.class }).range(spec.from, spec.to))
     }

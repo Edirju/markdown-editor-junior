@@ -44,11 +44,14 @@
   --cm-active-line-bg: rgba(0, 0, 0, 0.02);
   --cm-link: #2563eb;
   --cm-wiki-link: #7c3aed;
-  --cm-code-bg: #f5f5f4;
-  --cm-code-border: #e7e5e4;
-  --cm-code-text: #1c1917;
+  --cm-code-bg: #1e252c;
+  --cm-code-inline-bg: 30, 37, 44;
+  --cm-code-inline-tx: 255, 254, 254;
+  --cm-code-border: #2a323a;
+  --cm-code-text: #fffefe;
   --cm-formula-text: #2563eb;
   --cm-formula-bg: rgba(37, 99, 235, 0.06);
+  --cm-highlight-bg: #fef08a;
 }
 
 .dark {
@@ -78,11 +81,14 @@
   --cm-active-line-bg: rgba(255, 255, 255, 0.03);
   --cm-link: #60a5fa;
   --cm-wiki-link: #a78bfa;
-  --cm-code-bg: #1a1a1a;
+  --cm-code-bg: #fffefe;
   --cm-code-border: #3a3a3a;
-  --cm-code-text: #f5f5f4;
-  --cm-formula-text: #93bbfc;
-  --cm-formula-bg: rgba(96, 165, 250, 0.08);
+  --cm-code-inline-bg: 255, 254, 254;
+  --cm-code-inline-tx: 30, 37, 44;
+  --cm-code-text: #1e252c;
+  --cm-formula-text: #a5c9ff;
+  --cm-formula-bg: rgba(96, 165, 250, 0.18);
+  --cm-highlight-bg: #854d0e;
 }
 
 html, body {
@@ -490,9 +496,6 @@ html, body {
 .cm-md-task-unchecked,
 .cm-md-task-checked {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
 }
 
 .cm-md-task-unchecked::before,
@@ -526,3 +529,4 @@ html, body {
   border-width: 0 2px 2px 0;
   pointer-events: none;
 }
+

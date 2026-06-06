@@ -24,15 +24,15 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
   if (!open) return null
 
   return createPortal(
-    <div ref={backdropRef} class="modal-backdrop" onClick={(e) => { if (e.target === backdropRef.current) onClose() }}>
-      <div class="modal-container" role="dialog" aria-modal="true" aria-label={title}>
-        <div class="modal-header">
-          <h2 class="modal-title">{title}</h2>
-          <button class="modal-close-btn" onClick={onClose} aria-label="Close modal">
+    <div ref={backdropRef} className="modal-backdrop" onClick={(e) => { if (e.target === backdropRef.current) onClose() }}>
+      <div className="modal-container" role="dialog" aria-modal="true" aria-label={title}>
+        <div className="modal-header">
+          <h2 className="modal-title">{title}</h2>
+          <button className="modal-close-btn" onClick={onClose} aria-label="Close modal">
             ✕
           </button>
         </div>
-        <div class="modal-body">
+        <div className="modal-body">
           {children}
         </div>
       </div>

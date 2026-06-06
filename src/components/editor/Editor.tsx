@@ -3,8 +3,9 @@ import { EditorView, basicSetup } from 'codemirror'
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown'
 import { EditorState, Compartment } from '@codemirror/state'
 import { keymap } from '@codemirror/view'
+import { syntaxHighlighting, HighlightStyle } from '@codemirror/language'
 import { defaultKeymap } from '@codemirror/commands'
-import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language'
+import { tags } from '@lezer/highlight'
 import { $doc } from '../../stores/document'
 import { $cursorLine, $cursorCol, $editorMode } from '../../stores/ui'
 import { schedulePersist, loadDoc } from '../../lib/persistence'
@@ -24,9 +25,13 @@ import {
   insertNumberedList,
   insertTaskList,
   insertBlockquote,
+  insertBodyText,
   insertHorizontalRule,
   insertCodeBlock,
   insertTable,
+  indentLine,
+  outdentLine,
+  handleListEnter,
 } from '../../lib/format-commands'
 
 const customKeymap = keymap.of([
@@ -47,8 +52,34 @@ const customKeymap = keymap.of([
   { key: 'Mod-Shift-o', run: () => { insertNumberedList(); return true } },
   { key: 'Mod-Shift-t', run: () => { insertTaskList(); return true } },
   { key: 'Mod-Shift-q', run: () => { insertBlockquote(); return true } },
+  { key: 'Mod-0', run: () => { insertBodyText(); return true } },
   { key: 'Mod-Shift--', run: () => { insertHorizontalRule(); return true } },
   { key: 'Mod-Shift-c', run: () => { insertCodeBlock(); return true } },
+  { key: 'Tab', run: () => indentLine() },
+  { key: 'Shift-Tab', run: () => outdentLine() },
+  { key: 'Enter', run: () => handleListEnter() },
+])
+
+const headingHighlightStyle = HighlightStyle.define([
+  { tag: tags.meta, color: "#404740" },
+  { tag: tags.link, textDecoration: "underline" },
+  { tag: tags.heading, fontWeight: "bold" },
+  { tag: tags.emphasis, fontStyle: "italic" },
+  { tag: tags.strong, fontWeight: "bold" },
+  { tag: tags.strikethrough, textDecoration: "line-through" },
+  { tag: tags.keyword, color: "#708" },
+  { tag: [tags.atom, tags.bool, tags.url, tags.contentSeparator, tags.labelName], color: "#219" },
+  { tag: [tags.literal, tags.inserted], color: "#164" },
+  { tag: [tags.string, tags.deleted], color: "#a11" },
+  { tag: [tags.regexp, tags.escape, tags.special(tags.string)], color: "#e40" },
+  { tag: tags.definition(tags.variableName), color: "#00f" },
+  { tag: tags.local(tags.variableName), color: "#30a" },
+  { tag: [tags.typeName, tags.namespace], color: "#085" },
+  { tag: tags.className, color: "#167" },
+  { tag: [tags.special(tags.variableName), tags.macroName], color: "#256" },
+  { tag: tags.definition(tags.propertyName), color: "#00c" },
+  { tag: tags.comment, color: "#940" },
+  { tag: tags.invalid, color: "#f00" },
 ])
 
 export function Editor() {
@@ -84,12 +115,12 @@ export function Editor() {
         markdown({ base: markdownLanguage }),
         keymap.of(defaultKeymap),
         customKeymap,
-        cmTheme,
         livePreview(defaultExtensions),
         updateListener,
         editableCompartment.current.of(EditorView.editable.of(true)),
-        syntaxHighlighting(defaultHighlightStyle),
+        syntaxHighlighting(headingHighlightStyle),
         EditorView.lineWrapping,
+        cmTheme,
       ],
     })
 
