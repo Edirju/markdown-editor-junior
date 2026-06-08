@@ -3,7 +3,19 @@ import { atom } from 'nanostores'
 export type EditorMode = 'edit' | 'read'
 export type PersistenceStatus = 'saved' | 'saving' | 'dirty'
 export type MenuId = 'file' | 'edit' | 'view' | 'insert' | 'help'
-export type ModalId = 'settings' | 'shortcuts'
+export type ModalId = 'settings' | 'shortcuts' | 'footnote'
+
+export interface FootnoteState {
+  selectionFrom: number
+  selectionTo: number
+  selectedText: string
+}
+
+export const $footnoteState = atom<FootnoteState>({
+  selectionFrom: 0,
+  selectionTo: 0,
+  selectedText: '',
+})
 export type DropdownId = 'formato' | 'parrafo' | 'insertar'
 export type SubmenuId = 'fila' | 'columna'
 

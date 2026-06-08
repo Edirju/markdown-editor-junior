@@ -1,5 +1,5 @@
-import { get, set, del } from 'idb-keyval'
-import { $doc, $noteMeta } from '../stores/document'
+import { get, set } from 'idb-keyval'
+import { $noteMeta } from '../stores/document'
 import { $persistenceStatus } from '../stores/ui'
 
 const DOC_KEY = 'markdown-editor-doc'
@@ -26,7 +26,7 @@ function saveToLocalStorage(key: string, value: string): boolean {
   }
 }
 
-export async function persistDoc(doc: string): Promise<void> {
+async function persistDoc(doc: string): Promise<void> {
   $persistenceStatus.set('saving')
 
   const indexedOk = await saveToIndexedDB(DOC_KEY, doc)
@@ -63,23 +63,4 @@ export async function loadDoc(): Promise<string | null> {
   }
 }
 
-export async function loadMeta(): Promise<Record<string, string> | null> {
-  try {
-    const fromIndexed = await get<string>(META_KEY)
-    if (fromIndexed !== undefined) return JSON.parse(fromIndexed)
-  } catch { /* fall through */ }
 
-  try {
-    const raw = localStorage.getItem(META_KEY)
-    return raw ? JSON.parse(raw) : null
-  } catch {
-    return null
-  }
-}
-
-export async function clearSaved(): Promise<void> {
-  await del(DOC_KEY)
-  await del(META_KEY)
-  localStorage.removeItem(DOC_KEY)
-  localStorage.removeItem(META_KEY)
-}

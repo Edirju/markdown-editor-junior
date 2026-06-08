@@ -507,35 +507,119 @@ export function insertCodeBlock(): void {
   insertBlock('```', '```')
 }
 
-export function insertTable(): void {
+export function insertLink(): void {
+  const view = getEditorView()
+  if (!view) return
+
+  const { from, to } = view.state.selection.main
+  const selected = view.state.sliceDoc(from, to)
+  const hasSelection = from !== to
+
+  if (hasSelection) {
+    view.dispatch({
+      changes: { from, to, insert: `[${selected}](url)` },
+      selection: { anchor: from + selected.length + 3, head: from + selected.length + 6 },
+    })
+  } else {
+    view.dispatch({
+      changes: { from, to, insert: '[texto](url)' },
+      selection: { anchor: from + 1, head: from + 6 },
+    })
+  }
+}
+
+export function insertImage(): void {
+  const view = getEditorView()
+  if (!view) return
+
+  const { from, to } = view.state.selection.main
+  const selected = view.state.sliceDoc(from, to)
+  const hasSelection = from !== to
+
+  if (hasSelection) {
+    view.dispatch({
+      changes: { from, to, insert: `![${selected}](url)` },
+      selection: { anchor: from + selected.length + 4, head: from + selected.length + 7 },
+    })
+  } else {
+    view.dispatch({
+      changes: { from, to, insert: '![alt](url)' },
+      selection: { anchor: from + 2, head: from + 5 },
+    })
+  }
+}
+
+export function insertMathBlock(): void {
+  insertBlock('$$', '$$')
+}
+
+export function insertCallout(): void {
   const view = getEditorView()
   if (!view) return
 
   const { from } = view.state.selection.main
   const line = view.state.doc.lineAt(from)
-
-  const table = [
-    '| Columna 1 | Columna 2 | Columna 3 |',
-    '| --------- | --------- | --------- |',
-    '|           |           |           |',
-    '',
-  ].join('\n')
+  const template = '\n\n> [!NOTE] Título\n> Contenido'
 
   view.dispatch({
-    changes: { from: line.to, to: line.to, insert: '\n\n' + table },
-    selection: { anchor: line.to + 4 + table.indexOf('| ') },
+    changes: { from: line.to, to: line.to, insert: template },
+    selection: { anchor: line.to + template.length },
   })
 }
 
-export function insertFootnote(): void {
+export function insertAlert(type: string): void {
   const view = getEditorView()
   if (!view) return
 
   const { from } = view.state.selection.main
   const line = view.state.doc.lineAt(from)
+  const prefix = `\n\n> [!${type}]\n> `
 
   view.dispatch({
-    changes: { from: line.to, to: line.to, insert: '\n\n[^1]: Nota al pie' },
-    selection: { anchor: from },
+    changes: { from: line.to, to: line.to, insert: prefix + 'Explicación...\n' },
+    selection: { anchor: line.to + prefix.length },
   })
+}
+
+export function insertFootnote(id: string, content: string, selFrom: number, selTo: number): boolean {
+  const view = getEditorView()
+  if (!view) return false
+
+  const doc = view.state.doc.toString()
+  const marker = `[^${id}]`
+  const def = `\n\n[^${id}]: ${content}`
+
+  // If text was selected, replace it with the marker
+  if (selFrom !== selTo) {
+    view.dispatch({
+      changes: [
+        { from: selFrom, to: selTo, insert: marker },
+        { from: doc.length, to: doc.length, insert: def },
+      ],
+      selection: { anchor: selFrom + marker.length },
+    })
+  } else {
+    const line = view.state.doc.lineAt(selFrom)
+    view.dispatch({
+      changes: [
+        { from: line.to, to: line.to, insert: ` ${marker}` },
+        { from: doc.length, to: doc.length, insert: def },
+      ],
+      selection: { anchor: doc.length + def.length - 1 },
+    })
+  }
+  return true
+}
+
+export function getNextFootnoteId(): string {
+  const view = getEditorView()
+  if (!view) return '1'
+  const doc = view.state.doc.toString()
+  let maxNum = 0
+  const allFootnotes = doc.match(/\[\^(\d+)\]/g) || []
+  for (const fn of allFootnotes) {
+    const num = parseInt(fn.match(/\d+/)?.[0] || '0', 10)
+    if (num > maxNum) maxNum = num
+  }
+  return String(maxNum + 1)
 }

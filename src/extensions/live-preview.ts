@@ -8,9 +8,13 @@ import { taskListsExtension } from './task-lists'
 import { wikiLinksExtension, getWikiLinkDecorations } from './wiki-links'
 import { inlineCodeExtension } from './inline-code'
 import { strikethroughExtension } from './strikethrough'
-import { formulaExtension, getFormulaDecorations } from './formula'
 import { highlightExtension, getHighlightDecorations } from './highlight'
+import { formulaExtension, getFormulaDecorations } from './formula'
+import { getMathDecorations } from './math-block'
+import { getCalloutDecorations, isCalloutLine } from './callouts'
 import { blockquoteExtension } from './blockquote'
+import { horizontalRuleExtension } from './horizontal-rule'
+import { codeBlockExtension } from './code-block'
 
 export const defaultExtensions: MarkdownExtensionConfig[] = [
   headersExtension,
@@ -19,7 +23,10 @@ export const defaultExtensions: MarkdownExtensionConfig[] = [
   inlineCodeExtension,
   strikethroughExtension,
   highlightExtension,
+  formulaExtension,
   blockquoteExtension,
+  horizontalRuleExtension,
+  codeBlockExtension,
 ]
 
 function cursorInsideNode(state: { selection: { main: { head: number } } }, from: number, to: number): boolean {
@@ -37,8 +44,14 @@ function getDecorations(view: EditorView, extensions: MarkdownExtensionConfig[])
     enter: (nodeRef) => {
       const { node } = nodeRef
 
+      // Callouts use ">" syntax but are visually independent from blockquotes
+      const isCallout = node.type.name === 'Blockquote' && isCalloutLine(state.doc.sliceString(node.from, node.from + 20))
+
       for (const ext of extensions) {
         if (ext.nodeTypes.includes(node.type.name)) {
+          // Skip blockquote extension for callout blocks
+          if (isCallout && ext.name === 'blockquote') continue
+
           // Show raw syntax only for this specific formatting node
           if (cursorInsideNode(state, node.from, node.to)) return false
 
@@ -85,6 +98,22 @@ function getDecorations(view: EditorView, extensions: MarkdownExtensionConfig[])
   // 4. Highlight (==...==) — handled via regex
   const highlightDecos = getHighlightDecorations(docStr)
   for (const spec of highlightDecos) {
+    if (!cursorInsideNode(state, spec.from, spec.to)) {
+      decos.push(Decoration.mark({ class: spec.class }).range(spec.from, spec.to))
+    }
+  }
+
+  // 5. Display math blocks ($$...$$) — handled via regex
+  const mathDecos = getMathDecorations(docStr)
+  for (const spec of mathDecos) {
+    if (!cursorInsideNode(state, spec.from, spec.to)) {
+      decos.push(Decoration.mark({ class: spec.class }).range(spec.from, spec.to))
+    }
+  }
+
+  // 6. Callouts (> [!TYPE] ...) — handled via regex
+  const calloutDecos = getCalloutDecorations(docStr)
+  for (const spec of calloutDecos) {
     if (!cursorInsideNode(state, spec.from, spec.to)) {
       decos.push(Decoration.mark({ class: spec.class }).range(spec.from, spec.to))
     }

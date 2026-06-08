@@ -47,11 +47,26 @@
   --cm-code-bg: #1e252c;
   --cm-code-inline-bg: 30, 37, 44;
   --cm-code-inline-tx: 255, 254, 254;
+  --cm-code-border-line: 30, 37, 44;
   --cm-code-border: #2a323a;
   --cm-code-text: #fffefe;
   --cm-formula-text: #2563eb;
   --cm-formula-bg: rgba(37, 99, 235, 0.06);
   --cm-highlight-bg: #fef08a;
+
+  /* Syntax highlighting for code blocks */
+  --syntax-keyword: #c084fc;
+  --syntax-string: #fca5a5;
+  --syntax-number: #93c5fd;
+  --syntax-comment: #a8a29e;
+  --syntax-type: #22d3ee;
+  --syntax-function: #60a5fa;
+  --syntax-operator: #fb923c;
+  --syntax-builtin: #a78bfa;
+  --syntax-definition: #fbbf24;
+  --syntax-variable: #e2e8f0;
+  --syntax-literal: #fdba74;
+  --syntax-constant: #67e8f9;
 }
 
 .dark {
@@ -83,13 +98,87 @@
   --cm-wiki-link: #a78bfa;
   --cm-code-bg: #fffefe;
   --cm-code-border: #3a3a3a;
+  --cm-code-border-line: 255, 254, 254;
   --cm-code-inline-bg: 255, 254, 254;
   --cm-code-inline-tx: 30, 37, 44;
   --cm-code-text: #1e252c;
   --cm-formula-text: #a5c9ff;
   --cm-formula-bg: rgba(96, 165, 250, 0.18);
   --cm-highlight-bg: #854d0e;
+
+  /* Syntax highlighting for code blocks (dark theme → code bg is light) */
+  --syntax-keyword: #7c3aed;
+  --syntax-string: #dc2626;
+  --syntax-number: #2563eb;
+  --syntax-comment: #78716c;
+  --syntax-type: #0891b2;
+  --syntax-function: #2563eb;
+  --syntax-operator: #d97706;
+  --syntax-builtin: #7c3aed;
+  --syntax-definition: #b45309;
+  --syntax-variable: #1c1917;
+  --syntax-literal: #c2410c;
+  --syntax-constant: #0e7490;
 }
+
+/* Highlight.js classes mapped to CSS variables */
+.hljs-keyword { color: var(--syntax-keyword); }
+.hljs-string { color: var(--syntax-string); }
+.hljs-number { color: var(--syntax-number); }
+.hljs-comment { color: var(--syntax-comment); }
+.hljs-type { color: var(--syntax-type); }
+.hljs-title { color: var(--syntax-function); }
+.hljs-built_in { color: var(--syntax-builtin); }
+.hljs-literal { color: var(--syntax-literal); }
+.hljs-attr { color: var(--syntax-number); }
+.hljs-attribute { color: var(--syntax-number); }
+.hljs-selector-tag { color: var(--syntax-keyword); }
+.hljs-selector-class { color: var(--syntax-type); }
+.hljs-selector-id { color: var(--syntax-function); }
+.hljs-meta { color: var(--syntax-comment); }
+.hljs-variable { color: var(--syntax-variable); }
+.hljs-params { color: var(--syntax-variable); }
+.hljs-property { color: var(--syntax-function); }
+.hljs-punctuation { color: var(--syntax-variable); }
+.hljs-operator { color: var(--syntax-operator); }
+.hljs-regexp { color: var(--syntax-string); }
+.hljs-symbol { color: var(--syntax-constant); }
+.hljs-section { color: var(--syntax-function); }
+.hljs-link { color: var(--syntax-string); }
+.hljs-deletion { color: var(--syntax-string); }
+.hljs-addition { color: var(--syntax-literal); }
+.hljs-doctag { color: var(--syntax-keyword); }
+
+/* ============ MATH BLOCK ============ */
+
+.cm-md-math-block {
+  display: inline-block;
+  width: 100%;
+  font-family: "Latin Modern Math", "STIX Two Math", "Cambria Math", serif;
+  font-size: 1.15em;
+  line-height: 1.8;
+  text-align: center;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-left: 4px solid rgb(171, 94, 235);
+  padding: 1.5rem;
+  margin: 0.5rem 0;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  overflow-x: auto;
+  box-sizing: border-box;
+}
+
+.dark .cm-md-math-block {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-left-color: rgb(216, 151, 253);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* LaTeX syntax tokens inside math blocks */
+.cm-latex-command { color: var(--syntax-keyword); }
+.cm-latex-number  { color: var(--syntax-number); }
+.cm-latex-delim   { color: var(--syntax-operator); }
+.cm-latex-script  { color: var(--syntax-builtin); }
 
 html, body {
   margin: 0;
@@ -528,5 +617,439 @@ html, body {
   border: solid white;
   border-width: 0 2px 2px 0;
   pointer-events: none;
+}
+
+/* ============ CALLOUTS (independiente de blockquote) ============ */
+
+.cm-md-callout,
+.cm-md-callout-title {
+  display: inline-block;
+  width: 100%;
+  padding: 0.3em 1em 0.3em 1.2em;
+  border-left: 4px solid;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9375em;
+  color: var(--text-primary);
+}
+
+.cm-md-callout-title {
+  padding-left: 2.4em;
+  position: relative;
+  font-size: 18px;
+  font-weight: 600;
+  padding-top: 0.5em;
+  padding-bottom: 0.15em;
+}
+
+.cm-md-callout-title::before {
+  position: absolute;
+  left: 0.1em;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.3em;
+  line-height: 1;
+}
+
+/* ─── NOTE / INFO (Azul) ─── */
+.cm-md-callout--note {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0.01) 100%);
+  border-left-color: #3b82f6;
+}
+.cm-md-callout--note.cm-md-callout-title::before { content: 'ℹ️'; }
+
+/* ─── TODO (Cyan) ─── */
+.cm-md-callout--todo {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(6, 182, 212, 0.01) 100%);
+  border-left-color: #06b6d4;
+}
+.cm-md-callout--todo.cm-md-callout-title::before { content: '✅'; }
+
+/* ─── TIP / HINT / IMPORTANT (Verde) ─── */
+.cm-md-callout--tip {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(34, 197, 94, 0.01) 100%);
+  border-left-color: #22c55e;
+}
+.cm-md-callout--tip.cm-md-callout-title::before { content: '💡'; }
+
+/* ─── WARNING / CAUTION / ATTENTION (Amarillo) ─── */
+.cm-md-callout--warning {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.06) 0%, rgba(234, 179, 8, 0.01) 100%);
+  border-left-color: #eab308;
+}
+.cm-md-callout--warning.cm-md-callout-title::before { content: '⚠️'; }
+
+/* ─── ERROR / DANGER (Rojo) ─── */
+.cm-md-callout--error {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(239, 68, 68, 0.01) 100%);
+  border-left-color: #ef4444;
+}
+.cm-md-callout--error.cm-md-callout-title::before { content: '❌'; }
+
+/* ─── QUESTION / HELP (Morado) ─── */
+.cm-md-callout--question {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(168, 85, 247, 0.01) 100%);
+  border-left-color: #a855f7;
+}
+.cm-md-callout--question.cm-md-callout-title::before { content: '❓'; }
+
+/* ─── SUCCESS / CHECK / DONE (Verde brillante) ─── */
+.cm-md-callout--success {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.01) 100%);
+  border-left-color: #10b981;
+}
+.cm-md-callout--success.cm-md-callout-title::before { content: '✔️'; }
+
+/* ─── QUOTE / CITE (Gris) ─── */
+.cm-md-callout--quote {
+  background: linear-gradient(135deg, rgba(120, 113, 108, 0.06) 0%, rgba(120, 113, 108, 0.01) 100%);
+  border-left-color: #78716c;
+}
+.cm-md-callout--quote.cm-md-callout-title::before { content: '💬'; }
+
+/* Dark mode — slightly stronger tint */
+.dark .cm-md-callout--note  { background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.02) 100%); }
+.dark .cm-md-callout--todo  { background: linear-gradient(135deg, rgba(34, 211, 238, 0.08) 0%, rgba(34, 211, 238, 0.02) 100%); }
+.dark .cm-md-callout--tip   { background: linear-gradient(135deg, rgba(52, 211, 153, 0.08) 0%, rgba(52, 211, 153, 0.02) 100%); }
+.dark .cm-md-callout--warning { background: linear-gradient(135deg, rgba(250, 204, 21, 0.08) 0%, rgba(250, 204, 21, 0.02) 100%); }
+.dark .cm-md-callout--error { background: linear-gradient(135deg, rgba(248, 113, 113, 0.08) 0%, rgba(248, 113, 113, 0.02) 100%); }
+.dark .cm-md-callout--question { background: linear-gradient(135deg, rgba(192, 132, 252, 0.08) 0%, rgba(192, 132, 252, 0.02) 100%); }
+.dark .cm-md-callout--success { background: linear-gradient(135deg, rgba(52, 211, 153, 0.08) 0%, rgba(52, 211, 153, 0.02) 100%); }
+.dark .cm-md-callout--quote { background: linear-gradient(135deg, rgba(168, 162, 158, 0.08) 0%, rgba(168, 162, 158, 0.02) 100%); }
+
+/* ============ FOOTNOTES ============ */
+
+.cm-footnote-marker {
+  font-size: 10px;
+  vertical-align: super;
+  line-height: 1;
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 300;
+  user-select: none;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.15s ease, transform 0.15s ease;
+  display: inline-block;
+  position: relative;
+}
+
+.cm-footnote-marker:hover {
+  color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.cm-footnote-marker::before {
+  content: '[';
+  opacity: 0.35;
+  font-weight: 400;
+}
+
+.cm-footnote-marker::after {
+  content: ']';
+  opacity: 0.35;
+  font-weight: 400;
+}
+
+/* Footnote definition block styling */
+.cm-footnote-def-text {
+  display: inline-block;
+  font-size: 0.88em;
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.65;
+  padding: 0.15em 0.5em 0.15em 0;
+  border-radius: 0 6px 6px 0;
+  width: calc(100% - 2.5em);
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.cm-footnote-backref {
+  cursor: pointer;
+  color: var(--accent);
+  margin-left: 0.25em;
+  font-size: 0.95em;
+  user-select: none;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.15s ease, transform 0.15s ease;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.cm-footnote-backref:hover {
+  color: var(--accent-hover);
+  transform: translateX(2px);
+}
+
+/* Separator before footnotes section */
+.cm-footnote-separator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 1.2em 0 0.6em 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cm-footnote-separator hr {
+  flex: 1;
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 0;
+}
+
+.cm-footnote-separator-label {
+  font-size: 0.72em;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ============ MODAL ============ */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: modalFadeIn 0.15s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-container {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.06);
+  width: 90%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.2s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from { transform: translateY(8px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.modal-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.15s ease;
+}
+
+.modal-close-btn:hover {
+  background: var(--toolbar-btn-hover);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 16px 20px 20px;
+}
+
+/* Settings form inside modals */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.settings-options {
+  display: flex;
+  gap: 12px;
+}
+
+.settings-radio {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.settings-select {
+  padding: 7px 10px;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+}
+
+.settings-select:focus {
+  border-color: var(--accent);
+}
+
+.settings-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.settings-btn {
+  padding: 7px 16px;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  outline: none;
+}
+
+.settings-btn:active {
+  transform: scale(0.97);
+}
+
+.settings-btn--primary {
+  background: var(--accent);
+  color: white;
+}
+
+.settings-btn--primary:hover {
+  background: var(--accent-hover);
+}
+
+.settings-btn--secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.settings-btn--secondary:hover {
+  background: var(--toolbar-btn-hover);
+}
+
+/* ============ FOOTNOTE MODAL ============ */
+
+.footnote-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footnote-modal-selected {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 6px 10px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.footnote-modal-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px 12px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.footnote-modal-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
+}
+
+.footnote-modal-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.footnote-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.footnote-modal-hint {
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+  flex: 1;
+}
+
+.footnote-modal-buttons {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.footnote-modal-buttons .settings-btn {
+  white-space: nowrap;
 }
 

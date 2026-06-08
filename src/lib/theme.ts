@@ -77,13 +77,8 @@ export const cmTheme = EditorView.theme(
       fontFamily: "Inter, sans-serif",
       textDecoration: "none !important",
     },
-    ".cm-md-body-text": {
-      fontSize: "16px",
-      fontWeight: "400",
-      lineHeight: "1.7",
-    },
     ".cm-md-blockquote": {
-      borderLeft: "3px solid var(--accent)",
+      borderLeft: "2px solid var(--accent)",
       paddingLeft: "1em",
       color: "var(--text-secondary)",
       fontStyle: "italic",
@@ -96,28 +91,11 @@ export const cmTheme = EditorView.theme(
       borderLeft: "3px solid var(--accent)",
       paddingLeft: "1em",
     },
-    ".cm-md-list": {
-      paddingLeft: "1.5em",
-    },
-    ".cm-md-list-item": {
-      marginLeft: "1.5em",
-    },
-    ".cm-md-list-bullet": {
-      listStyleType: "disc",
-    },
-    ".cm-md-list-ordered": {
-      listStyleType: "decimal",
-    },
     ".cm-md-emphasis": {
       fontStyle: "italic",
     },
     ".cm-md-strong": {
       fontWeight: "700",
-    },
-    ".cm-md-link": {
-      color: "var(--cm-link)",
-      textDecoration: "underline",
-      cursor: "pointer",
     },
     ".cm-md-wiki-link": {
       color: "var(--cm-wiki-link)",
@@ -141,11 +119,27 @@ export const cmTheme = EditorView.theme(
     ".cm-md-formula": {
       fontFamily: '"Latin Modern Math", "STIX Two Math", "Cambria Math", serif',
       fontSize: "1.05em",
-      fontStyle: "italic",
+      letterSpacing: "0.05em",
+      fontStyle: "normal",
       color: "var(--cm-formula-text)",
       backgroundColor: "var(--cm-formula-bg)",
-      padding: "0.1em 0.3em",
+      padding: "0.4em 0.45em",
       borderRadius: "3px",
+    },
+    ".cm-md-code-block": {
+      display: "block",
+      fontFamily: "Inconsolata, 'JetBrains Mono', ui-monospace, monospace",
+      fontSize: ".875rem",
+      backgroundColor: "rgb(var(--cm-code-inline-bg))",
+      color: "rgb(var(--cm-code-inline-tx),0.85)",
+      borderLeft: "3px solid var(--accent)",
+      paddingLeft: "1em",
+      letterSpacing: "0.025em",
+      borderRadius: "0px",
+    },
+    ".cm-md-code-text": {
+      fontFamily: "Inconsolata, 'JetBrains Mono', ui-monospace, monospace",
+      fontSize: "0.875em",
     },
     ".cm-md-highlight": {
       backgroundColor: "var(--cm-highlight-bg)",
@@ -161,6 +155,15 @@ export const cmTheme = EditorView.theme(
       fontSize: "0.75em",
       verticalAlign: "super",
       lineHeight: "1",
+    },
+    ".cm-md-horizontal-rule": {
+      display: "inline-block",
+      width: "100%",
+      height: "0",
+      color: "transparent",
+      overflow: "hidden",
+      borderBottom: "1px solid rgb(var(--cm-code-border-line), 0.12)",
+      verticalAlign: "middle",
     },
   },
   { dark: false },

@@ -11,6 +11,7 @@ import { $cursorLine, $cursorCol, $editorMode } from '../../stores/ui'
 import { schedulePersist, loadDoc } from '../../lib/persistence'
 import { cmTheme } from '../../lib/theme'
 import { livePreview, defaultExtensions } from '../../extensions/live-preview'
+import { footnotePlugin } from '../../extensions/footnotes'
 import { setEditorView } from '../../lib/editor-ref'
 import {
   toggleBold,
@@ -28,7 +29,10 @@ import {
   insertBodyText,
   insertHorizontalRule,
   insertCodeBlock,
-  insertTable,
+  insertFootnote,
+  insertMathBlock,
+  insertLink,
+  insertImage,
   indentLine,
   outdentLine,
   handleListEnter,
@@ -55,6 +59,7 @@ const customKeymap = keymap.of([
   { key: 'Mod-0', run: () => { insertBodyText(); return true } },
   { key: 'Mod-Shift--', run: () => { insertHorizontalRule(); return true } },
   { key: 'Mod-Shift-c', run: () => { insertCodeBlock(); return true } },
+  { key: 'Mod-k', run: () => { insertLink(); return true } },
   { key: 'Tab', run: () => indentLine() },
   { key: 'Shift-Tab', run: () => outdentLine() },
   { key: 'Enter', run: () => handleListEnter() },
@@ -67,19 +72,19 @@ const headingHighlightStyle = HighlightStyle.define([
   { tag: tags.emphasis, fontStyle: "italic" },
   { tag: tags.strong, fontWeight: "bold" },
   { tag: tags.strikethrough, textDecoration: "line-through" },
-  { tag: tags.keyword, color: "#708" },
-  { tag: [tags.atom, tags.bool, tags.url, tags.contentSeparator, tags.labelName], color: "#219" },
-  { tag: [tags.literal, tags.inserted], color: "#164" },
-  { tag: [tags.string, tags.deleted], color: "#a11" },
-  { tag: [tags.regexp, tags.escape, tags.special(tags.string)], color: "#e40" },
-  { tag: tags.definition(tags.variableName), color: "#00f" },
-  { tag: tags.local(tags.variableName), color: "#30a" },
-  { tag: [tags.typeName, tags.namespace], color: "#085" },
-  { tag: tags.className, color: "#167" },
-  { tag: [tags.special(tags.variableName), tags.macroName], color: "#256" },
-  { tag: tags.definition(tags.propertyName), color: "#00c" },
-  { tag: tags.comment, color: "#940" },
-  { tag: tags.invalid, color: "#f00" },
+  { tag: tags.keyword, color: "var(--syntax-keyword)" },
+  { tag: [tags.atom, tags.bool, tags.url, tags.contentSeparator, tags.labelName], color: "var(--syntax-constant)" },
+  { tag: [tags.literal, tags.inserted], color: "var(--syntax-literal)" },
+  { tag: [tags.string, tags.deleted], color: "var(--syntax-string)" },
+  { tag: [tags.regexp, tags.escape, tags.special(tags.string)], color: "var(--syntax-string)" },
+  { tag: tags.definition(tags.variableName), color: "var(--syntax-function)" },
+  { tag: tags.local(tags.variableName), color: "var(--syntax-variable)" },
+  { tag: [tags.typeName, tags.namespace], color: "var(--syntax-type)" },
+  { tag: tags.className, color: "var(--syntax-type)" },
+  { tag: [tags.special(tags.variableName), tags.macroName], color: "var(--syntax-function)" },
+  { tag: tags.definition(tags.propertyName), color: "var(--syntax-function)" },
+  { tag: tags.comment, color: "var(--syntax-comment)" },
+  { tag: tags.invalid, color: "var(--syntax-string)" },
 ])
 
 export function Editor() {
@@ -116,6 +121,7 @@ export function Editor() {
         keymap.of(defaultKeymap),
         customKeymap,
         livePreview(defaultExtensions),
+        footnotePlugin(),
         updateListener,
         editableCompartment.current.of(EditorView.editable.of(true)),
         syntaxHighlighting(headingHighlightStyle),

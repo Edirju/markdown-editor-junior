@@ -1,6 +1,6 @@
 import { atom, map } from 'nanostores'
 
-export interface NoteMeta {
+interface NoteMeta {
   title: string
   createdAt: Date
   updatedAt: Date
